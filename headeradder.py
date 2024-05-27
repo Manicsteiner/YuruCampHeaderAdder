@@ -33,9 +33,13 @@ def headeradder(file, has_alpha=False):
     fl = open(file, 'rb')
     file_bytes = fl.read()
     (width, height) = getDimensionsFromFooter(file_bytes)
+    # for DXT1, (len(file_bytes) - 0x50) == (pixel_num / 2)
+    # for DX10/BC7, (len(file_bytes) - 0x50) == pixel_num
+    if (len(file_bytes) - 80) == (width * height):
+        has_alpha = True
     header = build_header(width, height, has_alpha)
     filename = getFileNameWithoutExtension(file)
-    #wrf = open(file+".dds", 'wb')
+    # wrf = open(file+".dds", 'wb')
     wrf = BytesIO()
     wrf.write(header)
     wrf.write(file_bytes)
